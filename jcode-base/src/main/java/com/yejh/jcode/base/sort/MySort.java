@@ -1,108 +1,155 @@
 package com.yejh.jcode.base.sort;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.Arrays;
 
+/**
+ * 数组排序算法
+ *
+ * @author <a href="mailto:yejh.1248@qq.com">Ye Jiahao</a>
+ * @create 2023-02-05
+ * @since 1.0.0
+ */
+@Slf4j
 public class MySort {
+
+    private static final int[] ARR = {5, 9, 6, 7, 3, 1, 8, 2, 4, 8, 0};
+
+    private static void swap(int[] arr, int idxA, int idxB) {
+        int temp = arr[idxA];
+        arr[idxA] = arr[idxB];
+        arr[idxB] = temp;
+    }
 
     /**
      * 插入排序
      */
-    private static void insertSort(int[] n) {
-        for (int i = 1, len = n.length; i < len; i++) {
-            for (int j = i; j > 0; j--) {
-                if (n[j] >= n[j - 1]) {
-                    break;
-                } else {
-                    int temp = n[j];
-                    n[j] = n[j - 1];
-                    n[j - 1] = temp;
-                }
+    public static void insertSort(int[] arr) {
+        for (int i = 1, len = arr.length; i < len; i++) {
+            for (int k = i; k > 0; k--) {
+                if (arr[k] >= arr[k - 1]) break;
+                swap(arr, k, k - 1);
             }
-            System.out.printf("insertSort - %s: %s%n", i, Arrays.toString(n));
+            log.info("i: {}, arr: {}", i, arr);
         }
-        System.out.println("----------------------------------------------");
+        log.info("--------------------------------------------------------");
     }
 
     /**
      * 选择排序
      */
-    private static void selectSort(int[] n) {
-        for (int i = 1, len = n.length; i < len; i++) {
-            int index = i - 1;
-            for (int j = i; j < len; j++) {
-                if (n[j] < n[index]) {
-                    index = j;
+    public static void selectSort(int[] arr) {
+        for (int i = 0, len = arr.length; i < len - 1; i++) {
+            int minIdx = i;
+            for (int k = i + 1; k < len; k++) {
+                if (arr[k] < arr[minIdx]) {
+                    minIdx = k;
                 }
             }
-            if (index != i - 1) {
-                int temp = n[index];
-                n[index] = n[i - 1];
-                n[i - 1] = temp;
+            if (minIdx != i) {
+                swap(arr, minIdx, i);
             }
-            System.out.printf("selectSort - %s: %s%n", i, Arrays.toString(n));
+            log.info("i: {}, arr: {}", i, arr);
         }
-        System.out.println("----------------------------------------------");
+        log.info("--------------------------------------------------------");
     }
 
     /**
      * 冒泡排序
      */
-    private static void bubbleSort(int[] n) {
-        for (int i = n.length; i > 1; i--) {
-            boolean isSorted = true;
-            for (int j = 1; j < i; j++) {
-                if (n[j - 1] > n[j]) {
-                    int temp = n[j - 1];
-                    n[j - 1] = n[j];
-                    n[j] = temp;
-                    isSorted = false;
+    public static void bubbleSort(int[] arr) {
+        for (int i = 1, len = arr.length; i < len; i++) {
+            boolean alreadySorted = true;
+            for (int k = 0; k < len - i; k++) {
+                if (arr[k] > arr[k + 1]) {
+                    alreadySorted = false;
+                    swap(arr, k, k + 1);
                 }
             }
-            if (isSorted) {
+            if (alreadySorted) {
                 break;
             }
-            System.out.printf("bubbleSort - %s: %s%n", i, Arrays.toString(n));
+            log.info("i: {}, arr: {}", i, arr);
         }
-        System.out.println("----------------------------------------------");
+        log.info("--------------------------------------------------------");
     }
 
     /**
      * 快速排序
      */
-    private static void quickSort(int[] n) {
-        quickSort(n, 0, n.length - 1);
-        System.out.println("----------------------------------------------");
+    public static void quickSort(int[] arr) {
+        recursiveQuickSort(arr, 0, arr.length - 1);
+        log.info("--------------------------------------------------------");
     }
 
-    private static void quickSort(int[] n, int low, int high) {
-        if (low < high) {
-            int middle = getMiddle(n, low, high);
-            System.out.printf("quickSort - %s: %s%n", middle, Arrays.toString(n));
-            quickSort(n, low, middle - 1);
-            quickSort(n, middle + 1, high);
+    private static void recursiveQuickSort(int[] arr, int min, int max) {
+        if (min > max) return;
+        int midVal = arr[min];
+        int left = min;
+        int right = max;
+        while (left < right) {
+            while (left < right && arr[right] >= midVal) right--;
+            arr[left] = arr[right];
+            while (left < right && arr[left] <= midVal) left++;
+            arr[right] = arr[left];
         }
+        int mid = left;
+        arr[mid] = midVal;
+        log.info("mid: {}, arr: {}", mid, arr);
+        recursiveQuickSort(arr, min, mid - 1);
+        recursiveQuickSort(arr, mid + 1, max);
     }
 
-    private static int getMiddle(int[] n, int low, int high) {
-        int temp = n[low];
-        while (low < high) {
-            while (low < high && n[high] >= temp) high--;
-            n[low] = n[high];
-            while (low < high && n[low] <= temp) low++;
-            n[high] = n[low];
+    /**
+     * 归并排序
+     */
+    public static void mergeSort(int[] arr) {
+        recursiveMergeSort(arr, 0, arr.length - 1);
+        log.info("--------------------------------------------------------");
+    }
+
+    private static void recursiveMergeSort(int[] arr, int min, int max) {
+        if (min == max) return;
+        int mid = min + max >>> 1;
+        recursiveMergeSort(arr, min, mid);
+        recursiveMergeSort(arr, mid + 1, max);
+
+        int[] tempArr = new int[max - min + 1];
+        int tempIdx = 0;
+
+        int p = min;
+        int q = mid + 1;
+        while (p <= mid && q <= max) {
+            if (arr[p] <= arr[q]) {
+                tempArr[tempIdx++] = arr[p++];
+            } else {
+                tempArr[tempIdx++] = arr[q++];
+            }
         }
-        n[low] = temp;
-        return low;
+        while (p <= mid) {
+            tempArr[tempIdx++] = arr[p++];
+        }
+        while (q <= max) {
+            tempArr[tempIdx++] = arr[q++];
+        }
+
+        for (int i = 0, len = tempArr.length; i < len; i++) {
+            arr[i + min] = tempArr[i];
+        }
+        log.info("mid: {}, arr: {}", mid, arr);
     }
 
     public static void main(String[] args) {
-        int[] n1 = {4, 6, 7, 3, 2, 1, 3, 5, 8, 7};
-        int[] n2 = Arrays.copyOf(n1, n1.length);
-        int[] n3 = Arrays.copyOf(n1, n1.length);
-        int[] n4 = Arrays.copyOf(n1, n1.length);
-        insertSort(n1);
-        selectSort(n2);
-        bubbleSort(n3);
-        quickSort(n4);
+        int[] arr1 = Arrays.copyOf(ARR, ARR.length);
+        int[] arr2 = Arrays.copyOf(ARR, ARR.length);
+        int[] arr3 = Arrays.copyOf(ARR, ARR.length);
+        int[] arr4 = Arrays.copyOf(ARR, ARR.length);
+        int[] arr5 = Arrays.copyOf(ARR, ARR.length);
+        insertSort(arr1);
+        selectSort(arr2);
+        bubbleSort(arr3);
+        quickSort(arr4);
+        mergeSort(arr5);
     }
 }
