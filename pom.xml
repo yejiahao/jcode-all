@@ -31,6 +31,8 @@
         <disruptor.version>3.4.4</disruptor.version>
         <zookeeper.version>3.4.14</zookeeper.version>
         <curator.version>2.13.0</curator.version>
+        <nacos.version>2.2.0</nacos.version>
+        <springboot-nacos.version>0.2.12</springboot-nacos.version>
     </properties>
 
     <dependencies>
@@ -126,12 +128,39 @@
                 <artifactId>curator-recipes</artifactId>
                 <version>${curator.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>com.alibaba.nacos</groupId>
+                <artifactId>nacos-client</artifactId>
+                <version>${nacos.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.nacos</groupId>
+                <artifactId>nacos-common</artifactId>
+                <version>${nacos.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.nacos</groupId>
+                <artifactId>nacos-api</artifactId>
+                <version>${nacos.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.boot</groupId>
+                <artifactId>nacos-config-spring-boot-starter</artifactId>
+                <version>${springboot-nacos.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.boot</groupId>
+                <artifactId>nacos-discovery-spring-boot-starter</artifactId>
+                <version>${springboot-nacos.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <modules>
         <module>jcode-base</module>
         <module>netty-server</module>
+        <module>nacos-access</module>
     </modules>
 
     <build>
