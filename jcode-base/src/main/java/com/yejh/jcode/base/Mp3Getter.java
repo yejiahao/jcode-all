@@ -1,8 +1,6 @@
 package com.yejh.jcode.base;
 
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -22,10 +20,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @create 2020-06-06
  * @since 1.1.0
  */
+@Slf4j
 public class Mp3Getter {
-
-    @SuppressWarnings("RedundantSlf4jDefinition")
-    private static final Logger LOGGER = LoggerFactory.getLogger(Mp3Getter.class);
 
     private static final String URI = "http://mp3.jiuku.9ku.com/mp3/199/";
 
@@ -36,7 +32,7 @@ public class Mp3Getter {
         private final AtomicInteger cnt = new AtomicInteger();
 
         @Override
-        public Thread newThread(@NotNull Runnable r) {
+        public Thread newThread(Runnable r) {
             return new Thread(r, "t-" + cnt.incrementAndGet());
         }
     });
@@ -74,15 +70,15 @@ public class Mp3Getter {
             int respCode = urlConnection.getResponseCode();
             if (respCode / 100 != 2) {
                 long end = System.currentTimeMillis();
-                LOGGER.error("abnormal respCode: [{}], id: [{}], cost: [{}] sec(s)", respCode, id, (end - start) / 1000F);
+                log.error("abnormal respCode: [{}], id: [{}], cost: [{}] sec(s)", respCode, id, (end - start) / 1000F);
                 return;
             }
             // 遍历所有的响应头字段
-            if (LOGGER.isDebugEnabled()) {
-                urlConnection.getHeaderFields().forEach((k, v) -> LOGGER.debug("resp header: {} ---> {}", k, v));
+            if (log.isDebugEnabled()) {
+                urlConnection.getHeaderFields().forEach((k, v) -> log.debug("resp header: {} ---> {}", k, v));
             }
         } catch (IOException e) {
-            LOGGER.error("getConnection exception: {}", e.getMessage(), e);
+            log.error("getConnection exception: {}", e.getMessage(), e);
             return;
         }
         try (InputStream is = urlConnection.getInputStream();
@@ -93,11 +89,11 @@ public class Mp3Getter {
                 fos.write(buffer, 0, len);
             }
         } catch (Exception e) {
-            LOGGER.error("read write stream exception: {}", e.getMessage(), e);
+            log.error("read write stream exception: {}", e.getMessage(), e);
             return;
         }
         long end = System.currentTimeMillis();
-        LOGGER.info("download completed, id: [{}], cost: [{}] sec(s)", id, (end - start) / 1000F);
+        log.info("download completed, id: [{}], cost: [{}] sec(s)", id, (end - start) / 1000F);
     }
 
 }

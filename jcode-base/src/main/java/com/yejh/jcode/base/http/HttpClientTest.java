@@ -1,5 +1,6 @@
 package com.yejh.jcode.base.http;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -16,7 +17,14 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.*;
 
+/**
+ * @author <a href="mailto:yejh.1248@qq.com">Ye Jiahao</a>
+ * @create 2021-11-09
+ * @since 1.0.0
+ */
+@Slf4j
 public class HttpClientTest {
+
     public static String get(String url, Map<String, String> entityMap, String charset) throws IOException {
         String result = "";
 
@@ -31,29 +39,29 @@ public class HttpClientTest {
             try {
                 sb.append(k).append("=").append(URLEncoder.encode(v, charset));
             } catch (UnsupportedEncodingException e) {
-                System.err.println(e);
+                log.error("exception: {}", e.getMessage(), e);
             }
         });
-        // 创建httpGet.
+        // 创建 httpGet.
         HttpGet httpget = new HttpGet(sb.toString());
-        System.out.println("request url: " + httpget.getURI());
+        log.info("request url: {}", httpget.getURI());
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             // 执行get请求
             try (CloseableHttpResponse response = httpClient.execute(httpget)) {
                 // 获取响应实体
                 HttpEntity entity = response.getEntity();
-                System.out.println("------------------------------------");
+                log.info("------------------------------------");
                 // 打印响应状态
-                System.out.println(response.getStatusLine());
+                log.info("{}", response.getStatusLine());
                 if (Objects.nonNull(entity)) {
                     result = EntityUtils.toString(entity, charset);
                     // 打印响应内容长度
-                    System.out.println("response content length: " + entity.getContentLength());
+                    log.info("response content length: {}", entity.getContentLength());
                     // 打印响应内容
-                    System.out.println("response content: " + result);
+                    log.info("response content: {}", result);
                 }
-                System.out.println("------------------------------------");
+                log.info("------------------------------------");
             }
         }
         return result;
@@ -63,12 +71,12 @@ public class HttpClientTest {
         String result = "";
         // 创建httpPost
         HttpPost httppost = new HttpPost(url);
-        System.out.println("request url: " + httppost.getURI());
+        log.info("request url: {}", httppost.getURI());
         // 创建参数队列
         List<NameValuePair> formParams = new ArrayList<>();
 
         entityMap.forEach((k, v) -> formParams.add(new BasicNameValuePair(k, v)));
-        System.out.println("request body: " + formParams);
+        log.info("request body: {}", formParams);
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             httppost.setEntity(new UrlEncodedFormEntity(formParams, charset));
@@ -76,31 +84,20 @@ public class HttpClientTest {
             try (CloseableHttpResponse response = httpClient.execute(httppost)) {
                 // 获取响应实体
                 HttpEntity entity = response.getEntity();
-                System.out.println("--------------------------------------");
+                log.info("--------------------------------------");
                 // 打印响应状态
-                System.out.println(response.getStatusLine());
+                log.info("{}", response.getStatusLine());
                 if (Objects.nonNull(entity)) {
                     result = EntityUtils.toString(entity);
                     // 打印响应内容长度
-                    System.out.println("response content length: " + entity.getContentLength());
+                    log.info("response content length: {}", entity.getContentLength());
                     // 打印响应内容
-                    System.out.println("response content: " + result);
+                    log.info("response content: {}", result);
                 }
-                System.out.println("--------------------------------------");
+                log.info("--------------------------------------");
             }
         }
         return result;
     }
 
-    public static void main(String[] args) throws IOException {
-        String url = "http://apis.juhe.cn/mobile/get";
-        Map<String, String> requestData = new HashMap<>();
-        requestData.put("phone", "13888888888");
-        requestData.put("key", "abcdefgh");
-        requestData.put("foo", "中文");
-
-        HttpClientTest.get(url, requestData, "UTF-8");
-        System.out.println("========================================");
-        HttpClientTest.post(url, requestData, "UTF-8");
-    }
 }

@@ -1,0 +1,46 @@
+<html>
+<title>WebSocket 测试页面</title>
+<script src="https://cdn.staticfile.org/jquery/1.12.4/jquery.min.js"></script>
+<body>
+<textarea id="message"></textarea>
+<button onclick="sendMessage()">发送消息</button>
+<button onclick="closeWebSocket()">关闭WebSocket连接</button>
+<div id="context"></div>
+</body>
+<script>
+    let websocket = new WebSocket("ws://localhost:8082/ws");
+    websocket.onerror = () => {
+        appendMessage("连接错误")
+    };
+
+    websocket.onopen = () => {
+        appendMessage("连接成功")
+    };
+
+    // 接收消息方法回调
+    websocket.onmessage = (event) => {
+        appendMessage(event.data)
+    };
+
+    websocket.onclose = () => {
+        appendMessage("关闭连接")
+    };
+
+    function appendMessage(message) {
+        let context = $("#context").html() + "</br>" + message;
+        $("#context").html(context);
+    }
+
+    // 关闭 WebSocket 连接
+    function closeWebSocket() {
+        websocket.close();
+    }
+
+    // 发送消息
+    function sendMessage() {
+        let message = $("#message").val();
+        websocket.send(message);
+    }
+
+</script>
+</html>

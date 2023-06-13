@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class ChannelHandler extends ChannelInboundHandlerAdapter {
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
         String newMsg = doSomething(String.valueOf(msg));
         ctx.channel().writeAndFlush(newMsg);
     }
@@ -25,6 +25,6 @@ public class ChannelHandler extends ChannelInboundHandlerAdapter {
      * 模拟业务逻辑
      */
     private String doSomething(String input) {
-        return input + "|yejh";
+        return input + "<end>yejh</end>";
     }
 }

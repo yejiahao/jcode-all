@@ -1,8 +1,6 @@
 package com.yejh.jcode.base.jdbc;
 
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
 import java.util.concurrent.*;
@@ -39,52 +37,51 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @create 2020-06-06
  * @since 1.1.0
  */
+@Slf4j
 public class DBStressTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DBStressTest.class);
-
-    private static final int THREAD_NUM = 1000;
+    private static int threadNum = 200;
 
     private static final CountDownLatch cdl = new CountDownLatch(1);
 
-    private static final ExecutorService es = Executors.newCachedThreadPool(new ThreadFactory() {
+    private static final ExecutorService ES = Executors.newCachedThreadPool(new ThreadFactory() {
         private final AtomicInteger cnt = new AtomicInteger();
 
         @Override
-        public Thread newThread(@NotNull Runnable r) {
+        public Thread newThread(Runnable r) {
             return new Thread(r, "t-" + cnt.incrementAndGet());
         }
     });
 
     public static void main(String[] args) throws InterruptedException {
-        for (int i = 0; i < THREAD_NUM; i++) {
-            es.execute(() -> {
+        while (threadNum-- > 0) {
+            ES.execute(() -> {
                 try {
-                    LOGGER.info("wait for cdl");
+                    log.info("wait for cdl");
                     cdl.await();
-                    LOGGER.info("begin query");
+                    log.info("begin query");
                     queryDB();
-                    LOGGER.info("end query");
+                    log.info("end query");
                 } catch (InterruptedException | SQLException e) {
-                    LOGGER.error("exception: {}", e.getMessage(), e);
+                    log.error("exception: {}", e.getMessage(), e);
                 }
             });
         }
-        LOGGER.info("main start");
+        log.info("main start");
         TimeUnit.SECONDS.sleep(3L);
         cdl.countDown();
-        es.shutdown();
+        ES.shutdown();
     }
 
     private static void queryDB() throws SQLException {
-        try (Connection conn = DriverManager.getConnection("jdbc:mysql://vm2.yejh.cn:3307/mydb?useSSL=false&characterEncoding=utf-8&serverTimezone=GMT%2B8", "root", "20170419");
+        try (Connection conn = DriverManager.getConnection("jdbc:mysql://vm0.yejh.cn:3307/mydb?useSSL=false&characterEncoding=utf-8&serverTimezone=GMT%2B8", "root", "mysql20170419");
              PreparedStatement pStat = conn.prepareStatement("SELECT tid, tname, create_time AS gmt_create, update_time FROM `table_test`");
              ResultSet rs = pStat.executeQuery()) {
             ResultSetMetaData metaData = rs.getMetaData();
-            LOGGER.info("{}  {}  {}  {}", metaData.getColumnName(1), metaData.getColumnName(2), metaData.getColumnLabel(3), metaData.getColumnLabel(4));
-            LOGGER.info("-------------------------------------");
+            log.info("{}  {}  {}  {}", metaData.getColumnName(1), metaData.getColumnName(2), metaData.getColumnLabel(3), metaData.getColumnLabel(4));
+            log.info("-------------------------------------");
             while (rs.next()) {
-                LOGGER.info("{}  {}  {}  {}", rs.getString("tid"), rs.getString(2), rs.getString("gmt_create"), rs.getString(4));
+                log.info("{}  {}  {}  {}", rs.getString("tid"), rs.getString(2), rs.getString("gmt_create"), rs.getString(4));
             }
         }
     }

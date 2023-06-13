@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yejh.jcode.sboot.restful.dao.mapper.MySQLMapper">
+
+    <resultMap id="resultMap_accountDO" type="com.yejh.jcode.sboot.restful.pojo.AccountDO">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="salary" column="salary" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <select id="listAccount" resultMap="resultMap_accountDO">
+        SELECT a.id,
+        a.name,
+        a.salary
+        FROM account a
+        <where>
+            <if test="accountParam.name != null and accountParam.name != ''">
+                a.name = #{accountParam.name}
+            </if>
+        </where>
+    </select>
+
+</mapper>

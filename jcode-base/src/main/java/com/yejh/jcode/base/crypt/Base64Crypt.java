@@ -2,7 +2,13 @@ package com.yejh.jcode.base.crypt;
 
 import java.util.Base64;
 
+/**
+ * @author <a href="mailto:yejh.1248@qq.com">Ye Jiahao</a>
+ * @create 2021-12-13
+ * @since 1.2.0
+ */
 public class Base64Crypt {
+
     public static String encrypt(String source) {
         byte[] target = Base64.getEncoder().encode(source.getBytes());
         return new String(target);

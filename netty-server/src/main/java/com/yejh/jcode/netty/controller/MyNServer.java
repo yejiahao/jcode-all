@@ -1,8 +1,8 @@
 package com.yejh.jcode.netty.controller;
 
+import com.yejh.jcode.netty.codec.XmlDecoder;
+import com.yejh.jcode.netty.codec.XmlEncoder;
 import com.yejh.jcode.netty.handler.ChannelHandler;
-import com.yejh.jcode.netty.handler.XmlDecoder;
-import com.yejh.jcode.netty.handler.XmlEncoder;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -23,11 +23,12 @@ import javax.annotation.PostConstruct;
  * @create 2022-12-09
  * @since 1.0.0
  */
+@SuppressWarnings("SpringJavaAutowiredFieldsWarningInspection")
 @Slf4j
 @Controller
 public class MyNServer {
 
-    @Value("${netty.server.port:80}")
+    @Value("${netty.server.port:8888}")
     private int port;
 
     @Autowired
