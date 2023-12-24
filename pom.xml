@@ -30,7 +30,7 @@
         <redisson.version>3.18.1</redisson.version>
         <shiro.version>1.10.1</shiro.version>
         <guava.version>31.1-jre</guava.version>
-        <rocketmq.version>4.9.4</rocketmq.version>
+        <rocketmq.version>4.9.7</rocketmq.version>
         <disruptor.version>3.4.4</disruptor.version>
         <zookeeper.version>3.4.14</zookeeper.version>
         <curator.version>2.13.0</curator.version>
