@@ -23,6 +23,9 @@
 
         <reactor.version>3.5.3</reactor.version>
         <mybatis-spring.version>2.3.0</mybatis-spring.version>
+        <mybatis-plus.version>3.5.5</mybatis-plus.version>
+        <freemarker.version>2.3.32</freemarker.version>
+        <clickhouse.version>0.4.6</clickhouse.version>
         <dom4j.version>1.6.1</dom4j.version>
         <xstream.version>1.4.20</xstream.version>
         <javax.mail.version>1.6.2</javax.mail.version>
@@ -73,6 +76,29 @@
                 <groupId>org.mybatis.spring.boot</groupId>
                 <artifactId>mybatis-spring-boot-starter</artifactId>
                 <version>${mybatis-spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-generator</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.freemarker</groupId>
+                <artifactId>freemarker</artifactId>
+                <version>${freemarker.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.clickhouse</groupId>
+                <artifactId>clickhouse-jdbc</artifactId>
+                <version>${clickhouse.version}</version>
             </dependency>
 
             <dependency>

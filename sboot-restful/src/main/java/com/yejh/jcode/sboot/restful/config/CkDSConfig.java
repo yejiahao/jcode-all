@@ -1,8 +1,8 @@
 package com.yejh.jcode.sboot.restful.config;
 
+import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -10,39 +10,33 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 import javax.sql.DataSource;
 
-/**
- * @author <a href="mailto:yejh.1248@qq.com">Ye Jiahao</a>
- * @create 2021-11-26
- * @since 1.1.0
- */
 @Configuration
-@MapperScan(basePackages = "com.yejh.jcode.sboot.restful.dao.mapper", sqlSessionTemplateRef = "mysqlSqlSessionTemplate")
-public class MySQLDSConfig {
+@MapperScan(basePackages = "com.yejh.jcode.sboot.restful.dao.mapper", sqlSessionTemplateRef = "ckSqlSessionTemplate")
+public class CkDSConfig {
 
-    @Bean("mysqlDataSourceProperties")
-    @Primary
-    @ConfigurationProperties(prefix = "spring.datasource.mysql")
+    @Bean("ckDataSourceProperties")
+    @ConfigurationProperties(prefix = "spring.datasource.clickhouse")
     public DataSourceProperties getDataSourceProperties() {
         return new DataSourceProperties();
     }
 
-    @Bean("mysqlDataSource")
-    @Primary
-    @ConfigurationProperties(prefix = "spring.datasource.mysql.configuration")
+    @Bean("ckDataSource")
+    @ConfigurationProperties(prefix = "spring.datasource.clickhouse.configuration")
     public HikariDataSource getDataSource() {
         return getDataSourceProperties().initializeDataSourceBuilder().type(HikariDataSource.class).build();
     }
 
-    @Bean("mysqlSqlSessionFactory")
-    @Primary
-    public SqlSessionFactory getSqlSessionFactory(@Qualifier("mysqlDataSource") DataSource dataSource) throws Exception {
-        SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
+    @Bean("ckSqlSessionFactory")
+    public SqlSessionFactory getSqlSessionFactory(@Qualifier("ckDataSource") DataSource dataSource) throws Exception {
+        /*
+         * mybatis-plus 不要使用原生的 {@code org.mybatis.spring.SqlSessionFactoryBean}，会报错：org.apache.ibatis.binding.BindingException: Invalid bound statement (not found)
+         */
+        MybatisSqlSessionFactoryBean bean = new MybatisSqlSessionFactoryBean();
         bean.setDataSource(dataSource);
         bean.setMapperLocations(
                 new ClassPathResource("com/yejh/jcode/sboot/restful/dao/mapper/MySQLMapper.xml")
@@ -50,15 +44,13 @@ public class MySQLDSConfig {
         return bean.getObject();
     }
 
-    @Bean("mysqlTransactionManager")
-    @Primary
-    public DataSourceTransactionManager getTransactionManager(@Qualifier("mysqlDataSource") DataSource dataSource) {
+    @Bean("ckTransactionManager")
+    public DataSourceTransactionManager getTransactionManager(@Qualifier("ckDataSource") DataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);
     }
 
-    @Bean("mysqlSqlSessionTemplate")
-    @Primary
-    public SqlSessionTemplate getSqlSessionTemplate(@Qualifier("mysqlSqlSessionFactory") SqlSessionFactory sqlSessionFactory) {
+    @Bean("ckSqlSessionTemplate")
+    public SqlSessionTemplate getSqlSessionTemplate(@Qualifier("ckSqlSessionFactory") SqlSessionFactory sqlSessionFactory) {
         return new SqlSessionTemplate(sqlSessionFactory);
     }
 }
